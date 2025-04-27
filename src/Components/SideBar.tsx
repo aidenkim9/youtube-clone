@@ -14,15 +14,6 @@ import tom from "../assets/tom.png";
 import megan from "../assets/megan.png";
 import cameron from "../assets/cameron.png";
 
-const ShortCutLinks = styled.div``;
-const SideBarLink = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  width: fit-content;
-  flex-wrap: wrap;
-  cursor: pointer;
-`;
 const Img = styled.img`
   width: 20px;
   margin-right: 20px;
@@ -65,48 +56,64 @@ const Container = styled.div<{ sideBar: boolean }>`
     display: ${(props) => (props.sideBar ? "" : "none")};
   }
 `;
+const ShortCutLinks = styled.div``;
+const SideBarLink = styled.div<{ id?: number; category?: number }>`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: fit-content;
+  flex-wrap: wrap;
+  cursor: pointer;
+  ${Img} {
+    padding-bottom: ${(props) => (props.id === props.category ? "2px" : "")};
+    border-bottom: ${(props) =>
+      props.id === props.category ? "3px solid red" : ""};
+  }
+`;
 
 interface ISideBarProps {
   sideBar: boolean;
+  category: number;
+  setCateory: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SideBar = ({ sideBar }: ISideBarProps) => {
+const SideBar = ({ sideBar, category, setCateory }: ISideBarProps) => {
   return (
     <Container sideBar={sideBar}>
       <ShortCutLinks>
-        <SideBarLink>
+        <SideBarLink id={0} category={category} onClick={() => setCateory(0)}>
           <Img src={home} />
           <P>Home</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={20} category={category} onClick={() => setCateory(20)}>
           <Img src={game_icon} />
           <P>Game Icon</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={2} category={category} onClick={() => setCateory(2)}>
           <Img src={automobiles} />
           <P>Automobiles</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={17} category={category} onClick={() => setCateory(17)}>
           <Img src={sports} />
           <P>Sports</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={24} category={category} onClick={() => setCateory(24)}>
           <Img src={entertainment} />
           <P>Entertainment</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={28} category={category} onClick={() => setCateory(28)}>
           <Img src={tech} />
           <P>Tech</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={10} category={category} onClick={() => setCateory(10)}>
           <Img src={music} />
           <P>Music</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={22} category={category} onClick={() => setCateory(22)}>
           <Img src={blogs} />
           <P>Blogs</P>
         </SideBarLink>
-        <SideBarLink>
+        <SideBarLink id={25} category={category} onClick={() => setCateory(25)}>
           <Img src={news} />
           <P>News</P>
         </SideBarLink>

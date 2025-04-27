@@ -6,6 +6,7 @@ import upload_icon from "../assets/upload.png";
 import more_icon from "../assets/more.png";
 import notification_icon from "../assets/notification.png";
 import profile_icon from "../assets/user_profile.jpg";
+import { Link } from "react-router-dom";
 
 const Nav = styled.nav`
   padding: 10px 2%;
@@ -16,7 +17,8 @@ const Nav = styled.nav`
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 10;
-  position: sticky; // 무슨 속성?
+  width: 100%;
+  position: fixed; // 무슨 속성?
 `;
 const NavLeft = styled.div`
   display: flex;
@@ -82,7 +84,9 @@ const Navbar = ({ setSideBar }: INavBarProps) => {
     <Nav>
       <NavLeft>
         <Menu onClick={() => setSideBar((prev) => !prev)} src={menu_icon} />
-        <Logo src={logo} />
+        <Link to="/">
+          <Logo src={logo} />
+        </Link>
       </NavLeft>
       <NavMiddle>
         <SearchBox>

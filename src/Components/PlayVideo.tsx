@@ -1,14 +1,18 @@
 import styled from "styled-components";
-import video1 from "../assets/video.mp4";
 import like from "../assets/like.png";
 import dislike from "../assets/dislike.png";
 import share from "../assets/share.png";
 import save from "../assets/save.png";
-import jack from "../assets/jack.png";
-import user_profile from "../assets/user_profile.jpg";
+import { useEffect, useState } from "react";
+import { API_KEY, value_converter } from "../data";
+import moment from "moment";
 
 const VideoContainer = styled.div`
   flex-basis: 69%; // what is this
+  iframe {
+    width: 100%;
+    height: 40vw; // vw, vh 차이?
+  }
   hr {
     border: 0;
     height: 1px;
@@ -16,9 +20,7 @@ const VideoContainer = styled.div`
     margin: 10px 0;
   }
 `;
-const VideoPlayer = styled.video`
-  width: 100%;
-`;
+
 const VideoTitle = styled.h3`
   margin-top: 20px;
   font-weight: 600;
@@ -125,19 +127,209 @@ const Icon = styled.img`
   margin-right: 8px;
 `;
 
-const PlayVideo = () => {
+interface IPlayVideoProps {
+  videoId: string;
+}
+interface IVideoData {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: {
+      default: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      medium: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      standard: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+    channelTitle: string;
+    tags: string[];
+    categoryId: string;
+    liveBroadcastContent: string;
+    defaultLanguage: string;
+    localized: {
+      title: string;
+      description: string;
+    };
+    defaultAudioLanguage: string;
+  };
+  statistics: {
+    viewCount: number;
+    likeCount: number;
+    favoriteCount: number;
+    commentCount: number;
+  };
+}
+
+interface IVideoDataResponse {
+  kind: string;
+  etag: string;
+  items: IVideoData[];
+}
+
+interface IChannelData {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    title: string;
+    description: string;
+    customUrl: string;
+    publishedAt: string;
+    thumbnails: {
+      default: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      medium: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+    localized: {
+      title: string;
+      description: string;
+    };
+    country: string;
+  };
+  contentDetails: {
+    relatedPlaylists: {
+      likes: string;
+      uploads: string;
+    };
+  };
+  statistics: {
+    viewCount: string;
+    subscriberCount: string;
+    hiddenSubscriberCount: boolean;
+    videoCount: string;
+  };
+}
+interface IChannelDataResponse {
+  kind: string;
+  etag: string;
+  pageInfo: {
+    totalResults: number;
+    resultPerPage: number;
+  };
+  items: IChannelData[];
+}
+interface ICommentData {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    channelId: string;
+    videoId: string;
+    topLevelComment: {
+      kind: string;
+      etag: string;
+      id: string;
+      snippet: {
+        channelId: string;
+        videoId: string;
+        textDisplay: string;
+        textOriginal: string;
+        authorDisplayName: string;
+        authorProfileImageUrl: string;
+        authorChannelUrl: string;
+        authorChannelId: {
+          value: string;
+        };
+        canRate: boolean;
+        viewerRating: string;
+        likeCount: number;
+        publishedAt: string;
+        updatedAt: string;
+      };
+    };
+    canReply: boolean;
+    totalReplyCount: number;
+    isPublic: boolean;
+  };
+}
+interface ICommentDataResponse {
+  kind: string;
+  etag: string;
+  nextPageToken: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  items: ICommentData[];
+}
+
+const PlayVideo = ({ videoId }: IPlayVideoProps) => {
+  const [apiData, setApiData] = useState<IVideoData | null>(null);
+  const [channelData, setChannelData] = useState<IChannelData | null>(null);
+  const [commentData, setCommentData] = useState<ICommentData[]>([]);
+
+  const fetchApiData = async () => {
+    // fetch video data
+    const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${API_KEY}`;
+    const fetchData: IVideoDataResponse = await (await fetch(fetch_url)).json();
+    setApiData(fetchData.items[0]);
+  };
+
+  const fetchOtherData = async () => {
+    const channel_url = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${apiData?.snippet.channelId}&key=${API_KEY}`;
+    const comments_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&videoId=${videoId}&key=${API_KEY}`;
+    const fetchChannelData: IChannelDataResponse = await (
+      await fetch(channel_url)
+    ).json();
+    const fetchCommentsData: ICommentDataResponse = await (
+      await fetch(comments_url)
+    ).json();
+    setChannelData(fetchChannelData.items[0]);
+    setCommentData(fetchCommentsData.items);
+  };
+
+  useEffect(() => {
+    fetchApiData();
+  }, []);
+
+  useEffect(() => {
+    fetchOtherData();
+  }, [apiData]); // 비동기 데이터 시간차 다시 이해하기
+
   return (
     <VideoContainer>
-      <VideoPlayer src={video1} controls autoPlay muted></VideoPlayer>
-      <VideoTitle>Best YouTube Channel To Learn Web Development.</VideoTitle>
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      ></iframe>
+      <VideoTitle>{apiData ? apiData.snippet.title : ""}</VideoTitle>
       <VideoInfo>
-        <p>1525 views &bull; 2 days ago</p>
+        <p>
+          {apiData ? value_converter(apiData.statistics.viewCount) : ""} views
+          &bull; {apiData ? moment(apiData.snippet.publishedAt).fromNow() : ""}
+        </p>
         <VideoInfoIcons>
           <span>
-            <Icon src={like} alt="" /> 125
+            <Icon src={like} alt="" />{" "}
+            {apiData ? value_converter(apiData.statistics.likeCount) : ""}
           </span>
           <span>
-            <Icon src={dislike} alt="" /> 2
+            <Icon src={dislike} alt="" />
           </span>
           <span>
             <Icon src={share} alt="" /> share
@@ -149,113 +341,54 @@ const PlayVideo = () => {
       </VideoInfo>
       <hr />
       <Publisher>
-        <img src={jack} alt="" />
+        <img
+          src={channelData ? channelData.snippet.thumbnails.medium.url : ""}
+          alt=""
+        />
         <div>
-          <p>GreatStack</p>
-          <span>1M Subscribers</span>
+          <p>{apiData ? apiData.snippet.channelTitle : ""}</p>
+          <span>
+            {channelData
+              ? value_converter(+channelData.statistics.subscriberCount)
+              : ""}{" "}
+            Subscribers
+          </span>
         </div>
         <button>Subscribe</button>
       </Publisher>
       <VideoDescription>
-        <p>Channel that makes learning Easy</p>
-        <p>Subscribe GreatStack to Watch More Tutorials on web Development</p>
+        <p>{apiData ? apiData.snippet.description.slice(0, 250) : ""}</p>
         <hr />
-        <h4>130 comments</h4>
-        <Comment>
-          <img src={user_profile} alt="" />
-          <div>
-            <h3>
-              Jack<span>1 day ago</span>
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
-              exercitationem reiciendis reprehenderit aliquid veritatis in
-              dolore magnam recusandae? Eos incidunt ut adipisci quidem.
-              Sapiente sint non repudiandae, molestiae repellendus iste!
-            </p>
-            <CommentAction>
-              <img src={like} alt="" />
-              <span>13</span>
-              <img src={dislike} alt="" />
-            </CommentAction>
-          </div>
-        </Comment>
-        <Comment>
-          <img src={user_profile} alt="" />
-          <div>
-            <h3>
-              Jack<span>1 day ago</span>
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
-              exercitationem reiciendis reprehenderit aliquid veritatis in
-              dolore magnam recusandae? Eos incidunt ut adipisci quidem.
-              Sapiente sint non repudiandae, molestiae repellendus iste!
-            </p>
-            <CommentAction>
-              <img src={like} alt="" />
-              <span>13</span>
-              <img src={dislike} alt="" />
-            </CommentAction>
-          </div>
-        </Comment>
-        <Comment>
-          <img src={user_profile} alt="" />
-          <div>
-            <h3>
-              Jack<span>1 day ago</span>
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
-              exercitationem reiciendis reprehenderit aliquid veritatis in
-              dolore magnam recusandae? Eos incidunt ut adipisci quidem.
-              Sapiente sint non repudiandae, molestiae repellendus iste!
-            </p>
-            <CommentAction>
-              <img src={like} alt="" />
-              <span>13</span>
-              <img src={dislike} alt="" />
-            </CommentAction>
-          </div>
-        </Comment>
-        <Comment>
-          <img src={user_profile} alt="" />
-          <div>
-            <h3>
-              Jack<span>1 day ago</span>
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
-              exercitationem reiciendis reprehenderit aliquid veritatis in
-              dolore magnam recusandae? Eos incidunt ut adipisci quidem.
-              Sapiente sint non repudiandae, molestiae repellendus iste!
-            </p>
-            <CommentAction>
-              <img src={like} alt="" />
-              <span>13</span>
-              <img src={dislike} alt="" />
-            </CommentAction>
-          </div>
-        </Comment>
-        <Comment>
-          <img src={user_profile} alt="" />
-          <div>
-            <h3>
-              Jack<span>1 day ago</span>
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia
-              exercitationem reiciendis reprehenderit aliquid veritatis in
-              dolore magnam recusandae? Eos incidunt ut adipisci quidem.
-              Sapiente sint non repudiandae, molestiae repellendus iste!
-            </p>
-            <CommentAction>
-              <img src={like} alt="" />
-              <span>13</span>
-              <img src={dislike} alt="" />
-            </CommentAction>
-          </div>
-        </Comment>
+        <h4>
+          {apiData ? value_converter(apiData.statistics.commentCount) : ""}{" "}
+          comments
+        </h4>
+        {commentData?.map((item, index) => {
+          return (
+            <Comment key={index}>
+              <img
+                src={item.snippet.topLevelComment.snippet.authorProfileImageUrl}
+                alt=""
+              />
+              <div>
+                <h3>
+                  {item.snippet.topLevelComment.snippet.authorDisplayName}
+                  <span>
+                    {moment(
+                      item.snippet.topLevelComment.snippet.publishedAt
+                    ).fromNow()}
+                  </span>
+                </h3>
+                <p>{item.snippet.topLevelComment.snippet.textDisplay}</p>
+                <CommentAction>
+                  <img src={like} alt="" />
+                  <span>{item.snippet.topLevelComment.snippet.likeCount}</span>
+                  <img src={dislike} alt="" />
+                </CommentAction>
+              </div>
+            </Comment>
+          );
+        })}
       </VideoDescription>
     </VideoContainer>
   );

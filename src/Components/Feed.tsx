@@ -1,13 +1,8 @@
 import styled from "styled-components";
-import thumbnail1 from "../assets/thumbnail1.png";
-import thumbnail2 from "../assets/thumbnail2.png";
-import thumbnail3 from "../assets/thumbnail3.png";
-import thumbnail4 from "../assets/thumbnail4.png";
-import thumbnail5 from "../assets/thumbnail5.png";
-import thumbnail6 from "../assets/thumbnail6.png";
-import thumbnail7 from "../assets/thumbnail7.png";
-import thumbnail8 from "../assets/thumbnail8.png";
 import { Link } from "react-router-dom";
+import { API_KEY, value_converter } from "../data";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 const FeedContainer = styled.div`
   display: grid;
@@ -37,139 +32,96 @@ const VideoInfo = styled.p`
   font-size: 14px;
 `;
 
-const Feed = () => {
+interface IFeedProps {
+  category: number;
+}
+
+interface IVideo {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: {
+      default: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      medium: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      standard: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+    channelTitle: string;
+    tags: string[];
+    categoryId: string;
+    liveBroadcastContent: string;
+    localized: {
+      title: string;
+      description: string;
+    };
+    defaultAudioLanguage: string;
+  };
+  contentDetails: {
+    duration: string;
+    dimension: string;
+    definition: string;
+    caption: string;
+    licensedContent: true;
+    contentRating: {};
+    projection: string;
+  };
+  statistics: {
+    viewCount: string;
+    likeCount: string;
+    favoriteCount: string;
+    commentCount: string;
+  };
+} // ts 다시 이해하기
+
+const Feed = ({ category }: IFeedProps) => {
+  const [data, setData] = useState<IVideo[]>();
+  console.log(data);
+
+  const fetchData = async () => {
+    const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=30&regionCode=KR&videoCategoryId=${category}&key=${API_KEY}`;
+
+    const videoList = await (await fetch(fetch_url)).json();
+
+    setData(videoList.items);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [category]);
+
   return (
     <FeedContainer>
-      <Link to={`video/20/124125`}>
-        <Card>
-          <Img src={thumbnail1} />
-          <VideoTitle>
-            Best channel to learn coding that help you to be a web developer.
-          </VideoTitle>
-          <ChannelName>Greatstack</ChannelName>
-          <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-        </Card>
-      </Link>
-      <Card>
-        <Img src={thumbnail2} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail3} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail4} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail5} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail6} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail7} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail8} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail1} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail2} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail3} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail4} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail5} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail6} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail7} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
-      <Card>
-        <Img src={thumbnail8} />
-        <VideoTitle>
-          Best channel to learn coding that help you to be a web developer.
-        </VideoTitle>
-        <ChannelName>Greatstack</ChannelName>
-        <VideoInfo>15K views &bull; 2 days ago</VideoInfo>
-      </Card>
+      {data?.map((item, index) => {
+        return (
+          <Link key={index} to={`video/${item.snippet.categoryId}/${item.id}`}>
+            <Card>
+              <Img src={item.snippet.thumbnails.medium.url} />
+              <VideoTitle>{item.snippet.title}</VideoTitle>
+              <ChannelName>{item.snippet.channelTitle}</ChannelName>
+              <VideoInfo>
+                {value_converter(+item.statistics.viewCount)} views &bull;{" "}
+                {moment(item.snippet.publishedAt).fromNow()}
+              </VideoInfo>
+            </Card>
+          </Link>
+        );
+      })}
     </FeedContainer>
   );
 };
