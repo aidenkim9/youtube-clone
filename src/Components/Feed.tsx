@@ -89,40 +89,65 @@ interface IVideo {
   };
 } // ts 다시 이해하기
 
+interface IVideoResponse {
+  kind: "youtube#videoListResponse";
+  etag: "jCemnKcYs-ujfIzNobryhTiZV5U";
+  items: IVideo[];
+  nextPageToken: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+}
+
 const Feed = ({ category }: IFeedProps) => {
-  const [data, setData] = useState<IVideo[]>();
+  const [data, setData] = useState<IVideo[]>([]);
+  const [loading, setLoading] = useState(true);
+
   console.log(data);
 
   const fetchData = async () => {
-    const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=30&regionCode=KR&videoCategoryId=${category}&key=${API_KEY}`;
-
-    const videoList = await (await fetch(fetch_url)).json();
-
-    setData(videoList.items);
+    try {
+      const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=30&regionCode=KR&videoCategoryId=${category}&key=${API_KEY}`;
+      const videoList: IVideoResponse = await (await fetch(fetch_url)).json();
+      setData(videoList.items);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, [category]);
 
   return (
-    <FeedContainer>
-      {data?.map((item, index) => {
-        return (
-          <Link key={index} to={`video/${item.snippet.categoryId}/${item.id}`}>
-            <Card>
-              <Img src={item.snippet.thumbnails.medium.url} />
-              <VideoTitle>{item.snippet.title}</VideoTitle>
-              <ChannelName>{item.snippet.channelTitle}</ChannelName>
-              <VideoInfo>
-                {value_converter(+item.statistics.viewCount)} views &bull;{" "}
-                {moment(item.snippet.publishedAt).fromNow()}
-              </VideoInfo>
-            </Card>
-          </Link>
-        );
-      })}
-    </FeedContainer>
+    <>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <FeedContainer>
+          {data?.map((item, index) => {
+            return (
+              <Link
+                key={index}
+                to={`video/${item.snippet.categoryId}/${item.id}`}
+              >
+                <Card>
+                  <Img src={item.snippet.thumbnails.medium.url} />
+                  <VideoTitle>{item.snippet.title}</VideoTitle>
+                  <ChannelName>{item.snippet.channelTitle}</ChannelName>
+                  <VideoInfo>
+                    {value_converter(+item.statistics.viewCount)} views &bull;{" "}
+                    {moment(item.snippet.publishedAt).fromNow()}
+                  </VideoInfo>
+                </Card>
+              </Link>
+            );
+          })}
+        </FeedContainer>
+      )}
+    </>
   );
 };
 

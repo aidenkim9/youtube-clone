@@ -103,37 +103,52 @@ interface IApiDataResponse {
 
 const Recommended = ({ categoryId }: IRecommendedProps) => {
   const [apiData, setApiData] = useState<IApiData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12&regionCode=KR&videoCategoryId=${categoryId}&key=${API_KEY}`;
-    const fetchedData: IApiDataResponse = await (await fetch(fetch_url)).json();
-    setApiData(fetchedData.items);
+    try {
+      const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12&regionCode=KR&videoCategoryId=${categoryId}&key=${API_KEY}`;
+      const fetchedData: IApiDataResponse = await (
+        await fetch(fetch_url)
+      ).json();
+
+      setApiData(fetchedData.items);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     fetchData();
+    setLoading(false);
   }, []);
 
   return (
-    <RecommendedContainer>
-      {apiData.map((item, index) => {
-        return (
-          <Link to={`/video/${item.snippet.categoryId}/${item.id}`}>
-            <SideVideoList key={index}>
-              <img src={item.snippet.thumbnails.medium.url} alt="" />
-              <VideoInfo>
-                <h3>{item.snippet.title}</h3>
-                <p>{item.snippet.channelTitle}</p>
-                <p>
-                  {value_converter(+item.statistics.viewCount)} views &bull;{" "}
-                  {moment(item.snippet.publishedAt).fromNow()}
-                </p>
-              </VideoInfo>
-            </SideVideoList>
-          </Link>
-        );
-      })}
-    </RecommendedContainer>
+    <>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <RecommendedContainer>
+          {apiData.map((item, index) => {
+            return (
+              <Link to={`/video/${item.snippet.categoryId}/${item.id}`}>
+                <SideVideoList key={index}>
+                  <img src={item.snippet.thumbnails.medium.url} alt="" />
+                  <VideoInfo>
+                    <h3>{item.snippet.title}</h3>
+                    <p>{item.snippet.channelTitle}</p>
+                    <p>
+                      {value_converter(+item.statistics.viewCount)} views &bull;{" "}
+                      {moment(item.snippet.publishedAt).fromNow()}
+                    </p>
+                  </VideoInfo>
+                </SideVideoList>
+              </Link>
+            );
+          })}
+        </RecommendedContainer>
+      )}
+    </>
   );
 };
 
