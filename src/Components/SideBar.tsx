@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import home from "../assets/home.png";
 import game_icon from "../assets/game_icon.png";
 import automobiles from "../assets/automobiles.png";
@@ -13,63 +12,15 @@ import simon from "../assets/simon.png";
 import tom from "../assets/tom.png";
 import megan from "../assets/megan.png";
 import cameron from "../assets/cameron.png";
-
-const Img = styled.img`
-  width: 20px;
-  margin-right: 20px;
-`;
-const P = styled.p``;
-const Hr = styled.hr`
-  border: 0;
-  height: 1px;
-  background: #ccc;
-`;
-const SubscribedList = styled.div``;
-const SubscribeTitle = styled.h3`
-  font-size: 15px;
-  font-weight: 700;
-  color: #5a5a5a;
-  margin: 20px 0px;
-`;
-const ProfileImg = styled.img`
-  width: 25px;
-  border-radius: 50%;
-  margin-right: 20px;
-`;
-
-const Container = styled.div<{ sideBar: boolean }>`
-  background: #fff;
-  width: ${(props) => (props.sideBar ? "15%" : "5%")};
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  padding-left: 2%;
-  padding-right: 2%;
-  padding-top: 80px;
-  ${P} {
-    display: ${(props) => (props.sideBar ? "" : "none")};
-  }
-  ${SubscribeTitle} {
-    display: ${(props) => (props.sideBar ? "" : "none")};
-  }
-  ${Hr} {
-    display: ${(props) => (props.sideBar ? "" : "none")};
-  }
-`;
-const ShortCutLinks = styled.div``;
-const SideBarLink = styled.div<{ id?: number; category?: number }>`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  width: fit-content;
-  flex-wrap: wrap;
-  cursor: pointer;
-  ${Img} {
-    padding-bottom: ${(props) => (props.id === props.category ? "2px" : "")};
-    border-bottom: ${(props) =>
-      props.id === props.category ? "3px solid red" : ""};
-  }
-`;
+import {
+  Container,
+  ShortCutLinks,
+  SideBarLink,
+  Img,
+  SubscribedList,
+  SubscribeTitle,
+  ProfileImg,
+} from "../Styles/SideBar.styles";
 
 interface ISideBarProps {
   sideBar: boolean;
@@ -83,63 +34,63 @@ const SideBar = ({ sideBar, category, setCateory }: ISideBarProps) => {
       <ShortCutLinks>
         <SideBarLink id={0} category={category} onClick={() => setCateory(0)}>
           <Img src={home} />
-          <P>Home</P>
+          <p>Home</p>
         </SideBarLink>
         <SideBarLink id={20} category={category} onClick={() => setCateory(20)}>
           <Img src={game_icon} />
-          <P>Game Icon</P>
+          <p>Game Icon</p>
         </SideBarLink>
         <SideBarLink id={2} category={category} onClick={() => setCateory(2)}>
           <Img src={automobiles} />
-          <P>Automobiles</P>
+          <p>Automobiles</p>
         </SideBarLink>
         <SideBarLink id={17} category={category} onClick={() => setCateory(17)}>
           <Img src={sports} />
-          <P>Sports</P>
+          <p>Sports</p>
         </SideBarLink>
         <SideBarLink id={24} category={category} onClick={() => setCateory(24)}>
           <Img src={entertainment} />
-          <P>Entertainment</P>
+          <p>Entertainment</p>
         </SideBarLink>
         <SideBarLink id={28} category={category} onClick={() => setCateory(28)}>
           <Img src={tech} />
-          <P>Tech</P>
+          <p>Tech</p>
         </SideBarLink>
         <SideBarLink id={10} category={category} onClick={() => setCateory(10)}>
           <Img src={music} />
-          <P>Music</P>
+          <p>Music</p>
         </SideBarLink>
         <SideBarLink id={22} category={category} onClick={() => setCateory(22)}>
           <Img src={blogs} />
-          <P>Blogs</P>
+          <p>Blogs</p>
         </SideBarLink>
         <SideBarLink id={25} category={category} onClick={() => setCateory(25)}>
           <Img src={news} />
-          <P>News</P>
+          <p>News</p>
         </SideBarLink>
       </ShortCutLinks>
-      <Hr />
+      <hr />
       <SubscribedList>
         <SubscribeTitle>Subscribed</SubscribeTitle>
         <SideBarLink>
           <ProfileImg src={jack} />
-          <P>PewDiePie</P>
+          <p>PewDiePie</p>
         </SideBarLink>
         <SideBarLink>
           <ProfileImg src={simon} />
-          <P>MrBeast</P>
+          <p>MrBeast</p>
         </SideBarLink>
         <SideBarLink>
           <ProfileImg src={tom} />
-          <P>Justin Bieber</P>
+          <p>Justin Bieber</p>
         </SideBarLink>
         <SideBarLink>
           <ProfileImg src={megan} />
-          <P>5-Minute Crafts</P>
+          <p>5-Minute Crafts</p>
         </SideBarLink>
         <SideBarLink>
           <ProfileImg src={cameron} />
-          <P>Nas Daily</P>
+          <p>Nas Daily</p>
         </SideBarLink>
       </SubscribedList>
     </Container>
