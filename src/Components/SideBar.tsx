@@ -48,11 +48,12 @@ const ProfileImg = styled.img`
 
 const Container = styled.div<{ sideBar: boolean }>`
   background: #fff;
-  width: ${(props) => (props.sideBar ? "13%" : "4%")};
+  width: ${(props) => (props.sideBar ? "15%" : "5%")};
   height: 100vh;
   position: fixed;
   top: 0;
   padding-left: 2%;
+  padding-right: 2%;
   padding-top: 80px;
   ${P} {
     display: ${(props) => (props.sideBar ? "" : "none")};
@@ -61,7 +62,7 @@ const Container = styled.div<{ sideBar: boolean }>`
     display: ${(props) => (props.sideBar ? "" : "none")};
   }
   ${Hr} {
-    margin-bottom: ${(props) => (props.sideBar ? "" : "20px")};
+    display: ${(props) => (props.sideBar ? "" : "none")};
   }
 `;
 

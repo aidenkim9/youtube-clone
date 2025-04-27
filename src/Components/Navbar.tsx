@@ -16,7 +16,7 @@ const Nav = styled.nav`
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 10;
-  position: sticky;
+  position: sticky; // 무슨 속성?
 `;
 const NavLeft = styled.div`
   display: flex;
