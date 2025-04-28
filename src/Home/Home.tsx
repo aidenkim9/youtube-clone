@@ -11,6 +11,10 @@ const HomeContainer = styled.div<{ sideBar: boolean }>`
   background: #f9f9f9;
   padding: 60px 2% 20px 17%;
   padding-left: ${(props) => (props.sideBar ? "" : "7%")};
+  @media (max-width: 900px) {
+    padding-left: 7%;
+    padding-right: 7%;
+  }
 `;
 
 const Home = ({ sideBar }: IHomeProps) => {

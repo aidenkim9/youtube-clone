@@ -28,11 +28,21 @@ export const NavRight = styled.div`
   img {
     width: 25px;
     margin-right: 20px;
+    &:first-child,
+    &:nth-child(2),
+    &:nth-child(3) {
+      @media (max-width: 900px) {
+        display: none;
+      }
+    }
   }
 `;
 export const Menu = styled.img`
   width: 22px;
   margin-right: 25px;
+  @media (max-width: 900px) {
+    display: none;
+  }
 `;
 export const Logo = styled.img`
   width: 130px;
@@ -50,6 +60,9 @@ export const Input = styled.input`
   outline: none;
   width: 400px;
   background: transparent;
+  @media (max-width: 900px) {
+    width: 150px;
+  }
 `;
 export const Search = styled.img`
   width: 15px;
@@ -58,4 +71,6 @@ export const Search = styled.img`
 export const Profile = styled.img`
   width: 35px;
   border-radius: 50%;
+  @media (max-width: 900px) {
+  }
 `;

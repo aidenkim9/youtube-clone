@@ -51,4 +51,7 @@ export const Container = styled.div<{ sideBar: boolean }>`
   ${SubscribeTitle} {
     display: ${(props) => (props.sideBar ? "" : "none")};
   }
+  @media (max-width: 900px) {
+    display: none;
+  }
 `;

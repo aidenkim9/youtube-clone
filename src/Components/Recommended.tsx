@@ -8,6 +8,9 @@ import { fetchRecommendedVideos } from "../Api/youtube";
 
 const RecommendedContainer = styled.div`
   flex-basis: 30%;
+  @media (max-width: 900px) {
+    flex-basis: 100%;
+  }
 `;
 const SideVideoList = styled.div`
   display: flex;
@@ -34,7 +37,7 @@ const VideoInfo = styled.div`
 `;
 
 interface IRecommendedProps {
-  categoryId: number;
+  categoryId: string;
 }
 
 const Recommended = ({ categoryId }: IRecommendedProps) => {

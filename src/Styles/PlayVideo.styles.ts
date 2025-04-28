@@ -5,12 +5,19 @@ export const VideoContainer = styled.div`
   iframe {
     width: 100%;
     height: 40vw;
+    @media (max-width: 900px) {
+      width: 100%;
+      height: 50vw;
+    }
   }
   hr {
     border: 0;
     height: 1px;
     background: #ccc;
     margin: 10px 0;
+  }
+  @media (max-width: 900px) {
+    flex-basis: 100%;
   }
 `;
 

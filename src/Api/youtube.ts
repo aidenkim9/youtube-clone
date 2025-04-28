@@ -67,7 +67,7 @@ export const fetchCommentDetails = async (
 
 //Recommended.tsx
 export const fetchRecommendedVideos = async (
-  categoryId: number
+  categoryId: string
 ): Promise<IRecommendedDataResponse | undefined> => {
   try {
     const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12&regionCode=KR&videoCategoryId=${categoryId}&key=${API_KEY}`;
