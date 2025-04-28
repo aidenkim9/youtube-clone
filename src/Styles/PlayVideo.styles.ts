@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 export const VideoContainer = styled.div`
-  flex-basis: 69%; // what is this
+  flex-basis: 69%;
   iframe {
     width: 100%;
-    height: 40vw; // vw, vh 차이?
+    height: 40vw;
   }
   hr {
     border: 0;
@@ -30,7 +30,7 @@ export const VideoInfo = styled.div`
 `;
 export const VideoInfoIcons = styled.div`
   span {
-    display: inline-flex; // span에서 flex만 주면 세로 정렬되는 이유?
+    display: inline-flex;
     align-items: center;
     margin-left: 15px;
   }
@@ -44,7 +44,7 @@ export const Publisher = styled.div`
     margin-right: 10px;
   }
   div {
-    flex: 1; // what is this
+    flex: 1;
     line-height: 18px;
     p {
       font-weight: 600;

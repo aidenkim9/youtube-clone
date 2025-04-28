@@ -1,5 +1,5 @@
 //Feed.tsx
-export interface IVideo {
+export interface IFeedVideo {
   kind: string;
   etag: string;
   id: string;
@@ -50,7 +50,17 @@ export interface IVideo {
     favoriteCount: string;
     commentCount: string;
   };
-} // ts 다시 이해하기
+}
+export interface IFeedVideoResponse {
+  kind: "youtube#videoListResponse";
+  etag: "jCemnKcYs-ujfIzNobryhTiZV5U";
+  items: IVideo[];
+  nextPageToken: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+}
 
 //PlayVideo.tsx
 export interface IVideoData {
@@ -199,7 +209,7 @@ export interface ICommentDataResponse {
 }
 
 //Recommended.tsx
-export interface IApiData {
+export interface IRecommendedData {
   kind: string;
   etag: string;
   id: string;
@@ -254,11 +264,11 @@ export interface IApiData {
   };
 }
 
-export interface IApiDataResponse {
+export interface IRecommendedDataResponse {
   kind: string;
   etag: string;
   nextPageToken: string;
-  items: IApiData[];
+  items: IRecommendedData[];
   pageInfo: {
     totalResults: number;
     resultsPerPage: number;

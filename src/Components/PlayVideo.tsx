@@ -3,16 +3,9 @@ import dislike from "../assets/dislike.png";
 import share from "../assets/share.png";
 import save from "../assets/save.png";
 import { useEffect, useState } from "react";
-import { API_KEY, value_converter } from "../data";
+import { value_converter } from "../data";
 import moment from "moment";
-import {
-  IChannelData,
-  IChannelDataResponse,
-  ICommentData,
-  ICommentDataResponse,
-  IVideoData,
-  IVideoDataResponse,
-} from "../Types/youtube";
+import { IChannelData, ICommentData, IVideoData } from "../Types/youtube";
 import {
   VideoContainer,
   VideoTitle,
@@ -24,6 +17,11 @@ import {
   Comment,
   CommentAction,
 } from "../Styles/PlayVideo.styles";
+import {
+  fetchVideoDetails,
+  fetchChannelDetails,
+  fetchCommentDetails,
+} from "../Api/youtube";
 
 interface IPlayVideoProps {
   videoId: string;
@@ -34,46 +32,22 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
   const [commentData, setCommentData] = useState<ICommentData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchApiData = async () => {
-    // fetch video data
-    try {
-      const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${API_KEY}`;
-      const fetchData: IVideoDataResponse = await (
-        await fetch(fetch_url)
-      ).json();
-
-      setApiData(fetchData.items[0]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchOtherData = async () => {
-    try {
-      const channel_url = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${apiData?.snippet.channelId}&key=${API_KEY}`;
-      const comments_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&videoId=${videoId}&key=${API_KEY}`;
-      const fetchChannelData: IChannelDataResponse = await (
-        await fetch(channel_url)
-      ).json();
-      const fetchCommentsData: ICommentDataResponse = await (
-        await fetch(comments_url)
-      ).json();
-
-      setChannelData(fetchChannelData.items[0]);
-      setCommentData(fetchCommentsData.items);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    fetchApiData();
-    setLoading(false);
-  }, []);
+    const fetchAll = async () => {
+      const data = await fetchVideoDetails(videoId);
 
-  useEffect(() => {
-    fetchOtherData();
-  }, [apiData]); // 비동기 데이터 시간차 다시 이해하기
+      if (!data) return;
+      const [channelFetchedData, commentFetchedData] = await Promise.all([
+        fetchChannelDetails(data.items[0].snippet.channelId),
+        fetchCommentDetails(videoId),
+      ]);
+      setApiData(data.items[0]);
+      if (channelFetchedData) setChannelData(channelFetchedData.items[0]);
+      if (commentFetchedData) setCommentData(commentFetchedData.items);
+      setLoading(false);
+    };
+    fetchAll();
+  }, [apiData]);
 
   return (
     <>
@@ -97,17 +71,17 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
             </p>
             <VideoInfoIcons>
               <span>
-                <Icon src={like} alt="" />{" "}
+                <Icon src={like} />
                 {apiData ? value_converter(apiData.statistics.likeCount) : ""}
               </span>
               <span>
-                <Icon src={dislike} alt="" />
+                <Icon src={dislike} />
               </span>
               <span>
-                <Icon src={share} alt="" /> share
+                <Icon src={share} /> share
               </span>
               <span>
-                <Icon src={save} alt="" /> save
+                <Icon src={save} /> save
               </span>
             </VideoInfoIcons>
           </VideoInfo>
@@ -115,10 +89,9 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
           <Publisher>
             <img
               src={channelData ? channelData.snippet.thumbnails.medium.url : ""}
-              alt=""
             />
             <div>
-              <p>{apiData ? apiData.snippet.channelTitle : ""}</p>
+              <p>{apiData ? apiData.snippet.channelTitle : "Title here"}</p>
               <span>
                 {channelData
                   ? value_converter(+channelData.statistics.subscriberCount)
@@ -129,7 +102,11 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
             <button>Subscribe</button>
           </Publisher>
           <VideoDescription>
-            <p>{apiData ? apiData.snippet.description.slice(0, 250) : ""}</p>
+            <p>
+              {apiData
+                ? apiData.snippet.description.slice(0, 250)
+                : "description"}
+            </p>
             <hr />
             <h4>
               {apiData ? value_converter(apiData.statistics.commentCount) : ""}{" "}
@@ -142,7 +119,6 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
                     src={
                       item.snippet.topLevelComment.snippet.authorProfileImageUrl
                     }
-                    alt=""
                   />
                   <div>
                     <h3>
@@ -155,11 +131,11 @@ const PlayVideo = ({ videoId }: IPlayVideoProps) => {
                     </h3>
                     <p>{item.snippet.topLevelComment.snippet.textDisplay}</p>
                     <CommentAction>
-                      <img src={like} alt="" />
+                      <img src={like} />
                       <span>
                         {item.snippet.topLevelComment.snippet.likeCount}
                       </span>
-                      <img src={dislike} alt="" />
+                      <img src={dislike} />
                     </CommentAction>
                   </div>
                 </Comment>

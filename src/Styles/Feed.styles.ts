@@ -9,7 +9,7 @@ export const FeedContainer = styled.div`
 `;
 export const Card = styled.div``;
 export const Img = styled.img`
-  width: 100%; // 넘치던 이미지가 어떻게 화면에 맞춰지는지?
+  width: 100%;
   border-radius: 3%;
 `;
 export const VideoTitle = styled.h2`

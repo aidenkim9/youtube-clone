@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { API_KEY, value_converter } from "../data";
+import { value_converter } from "../data";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { IApiData, IApiDataResponse } from "../Types/youtube";
+import { IRecommendedData } from "../Types/youtube";
+import { fetchRecommendedVideos } from "../Api/youtube";
 
 const RecommendedContainer = styled.div`
   flex-basis: 30%;
@@ -13,7 +14,7 @@ const SideVideoList = styled.div`
   justify-content: space-between;
   margin-bottom: 8px;
   img {
-    flex-basis: 49%; // 중첩되는 개념을 모르겠다
+    flex-basis: 49%;
     width: 50%;
   }
   p {
@@ -33,30 +34,23 @@ const VideoInfo = styled.div`
 `;
 
 interface IRecommendedProps {
-  categoryId: string;
+  categoryId: number;
 }
 
 const Recommended = ({ categoryId }: IRecommendedProps) => {
-  const [apiData, setApiData] = useState<IApiData[]>([]);
+  const [apiData, setApiData] = useState<IRecommendedData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    try {
-      const fetch_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12&regionCode=KR&videoCategoryId=${categoryId}&key=${API_KEY}`;
-      const fetchedData: IApiDataResponse = await (
-        await fetch(fetch_url)
-      ).json();
-
-      setApiData(fetchedData.items);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchRecommendedVideos(categoryId);
+      if (!data) return;
+
+      setApiData(data.items);
+      setLoading(false);
+    };
     fetchData();
-    setLoading(false);
-  }, []);
+  }, [categoryId]);
 
   return (
     <>
@@ -66,8 +60,11 @@ const Recommended = ({ categoryId }: IRecommendedProps) => {
         <RecommendedContainer>
           {apiData.map((item, index) => {
             return (
-              <Link to={`/video/${item.snippet.categoryId}/${item.id}`}>
-                <SideVideoList key={index}>
+              <Link
+                key={index}
+                to={`/video/${item.snippet.categoryId}/${item.id}`}
+              >
+                <SideVideoList>
                   <img src={item.snippet.thumbnails.medium.url} alt="" />
                   <VideoInfo>
                     <h3>{item.snippet.title}</h3>

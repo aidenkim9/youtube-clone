@@ -10,7 +10,7 @@ export const Nav = styled.nav`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 10;
   width: 100%;
-  position: fixed; // 무슨 속성?
+  position: fixed;
 `;
 export const NavLeft = styled.div`
   display: flex;
