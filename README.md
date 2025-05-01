@@ -1,6 +1,7 @@
 # 🎬 YouTube Clone Project
 
 > Vite + React + TypeScript + styled-components 기반으로 제작한 YouTube 클론 프로젝트입니다.
+> https://aiden-youtube-clone.netlify.app/
 
 <br />
 
